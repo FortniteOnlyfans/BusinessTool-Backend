@@ -28,13 +28,40 @@ public class Main {
 
         Spark.port(port);
 
+        // DEV CORS
+        Spark.options("/*", (request, response) -> {
+
+            String accessControlRequestHeaders =
+                    request.headers("Access-Control-Request-Headers");
+
+            if (accessControlRequestHeaders != null) {
+                response.header("Access-Control-Allow-Headers",
+                        accessControlRequestHeaders);
+            }
+
+            String accessControlRequestMethod =
+                    request.headers("Access-Control-Request-Method");
+
+            if (accessControlRequestMethod != null) {
+                response.header("Access-Control-Allow-Methods",
+                        accessControlRequestMethod);
+            }
+
+            return "OK";
+        });
+
+        Spark.before((request, response) -> {
+            response.header("Access-Control-Allow-Origin", "*");
+            response.header("Access-Control-Allow-Methods",
+                    "GET,POST,PUT,DELETE,OPTIONS");
+            response.header("Access-Control-Allow-Headers",
+                    "Content-Type,Authorization");
+            response.type("application/json");
+        });
+
         Spark.post("/register", new RegisterRouter());
         Spark.post("/login", new LoginRouter());
         Spark.get("/deleteAcc", new DeleteAccRouter());
-
-        Spark.get("/cost/test", (request, response) -> {
-            return "{cost:100,currency:\"eur\"}";
-        });
 
         Spark.init();
 
