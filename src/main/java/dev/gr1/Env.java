@@ -15,6 +15,7 @@ public class Env {
             Reader reader = new InputStreamReader(fis, StandardCharsets.UTF_8);
             List<String> lines = reader.readAllLines();
             for (String line : lines) {
+                if (line.startsWith("#")) continue;
                 String[] parts = line.split("=");
                 LOCALENV.put(parts[0], parts[1]);
             }
@@ -32,7 +33,7 @@ public class Env {
     public static String getString(String name) {
         String v = LOCALENV.get(name);
         if (v == null) {
-            throw new IllegalStateException("Local Env. " + name + " is not defined!");
+            return null;
         }
         return v;
     }
