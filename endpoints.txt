@@ -1,0 +1,126 @@
+Alle responses (außer auth) sehen so aus:
+{
+    "status": string, ("success"|"fail"|"expired")
+    *"reason": string,
+    *"payload": Payload
+}
+
+wobei Payload unten immer definiert ist.
+
+==== DEFINITIONS ====
+
+Geld := {
+    "name": string
+    "wert": number (in eur)
+    *"zinsen" number (in %)
+    *"laufzeit": number (in months)
+}
+
+==== ENDPOINTS ====
+
+POST: /login
+REQUEST:
+{
+    "username": string,
+    "password": string
+}
+
+RESPONSE:
+Authorization = token
+
+POST: /register
+REQUEST:
+{
+    "username": string,
+    "password": string
+}
+
+GET: /deleteAcc
+REQUEST:
+Authorization = token
+
+GET: /project/<n>/info
+REQUEST:
+Authorization = token
+
+RESPONSE:
+
+{
+    "name": string,
+    "type": string,
+    *"latest": number,
+    "versions": [ number ],
+    "created": number (in milliseconds)
+}
+
+POST: /project/create
+REQUEST:
+Authorization = token
+{
+    "name": string,
+    "type": string,
+    "startKosten": [
+        Geld
+    ]
+}
+
+RESPONSE:
+{
+    "projId": number
+}
+
+POST: /project/<n>/delete
+REQUEST:
+Authorization = token
+
+GET: /project/<n>/version/<n>/info
+REQUEST:
+Authorization = token
+
+RESPONSE:
+
+{
+    "kosten": [
+        Geld
+    ],
+    "finanzierung": [
+        Geld
+    ],
+    "kapital": [
+        Geld
+    ],
+    "privat": [
+        Geld
+    ],
+    "ertrag": [
+        Geld
+    ],
+    "zeitspanne": number (in months),
+    "erstellt": number (in milliseconds),
+    "userName": string
+}
+
+POST: /project/<n>/version/create
+REQUEST: Authorization = token
+{
+     *"kosten": [
+            Geld
+     ],
+     *"finanzierung": [
+         Geld
+     ],
+     *"kapital": [
+         Geld
+     ],
+     *"privat": [
+         Geld
+     ],
+     *"ertrag": [
+         Geld
+     ],
+     "zeitspanne": number (in months),
+}
+RESPONSE:
+{
+    "projVerId": number
+}

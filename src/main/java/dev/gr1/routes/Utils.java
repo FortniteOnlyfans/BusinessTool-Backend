@@ -29,7 +29,7 @@ public class Utils {
 
     public static User findUser(List<User> users, String username) {
         for (User user : users) {
-            boolean isEq = user.NAME.equals(username);
+            boolean isEq = user.Name.equals(username);
             if (isEq) return user;
         }
         return null;

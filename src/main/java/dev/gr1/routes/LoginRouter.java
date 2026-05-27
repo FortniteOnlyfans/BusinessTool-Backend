@@ -30,7 +30,7 @@ public class LoginRouter implements Route {
             if (found == null) {
                 return Utils.fail("User does not exist");
             }
-            if (!Auth.checkPassword(password, found.PWDHASH)) {
+            if (!Auth.checkPassword(password, found.Pwd)) {
                 return Utils.fail("Wrong password");
             }
 

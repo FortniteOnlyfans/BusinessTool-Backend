@@ -10,9 +10,11 @@ import java.util.HashMap;
 public class Database {
     private final Connection connection;
     private HashMap<Class<?>, Dao<?>> daos;
+    private HashMap<Class<?>, DaoSupply<?>> customSupplies;
 
     public Database(String filename) {
         this.daos = new HashMap<>();
+        this.customSupplies = new HashMap<>();
 
         String url = "jdbc:sqlite:" + filename;
         Connection conn = null;
@@ -27,15 +29,32 @@ public class Database {
         this.connection = conn;
     }
 
+    public <T> void registerCustomDao(Class<T> forClass, DaoSupply<T> supply) {
+        this.customSupplies.put(forClass, supply);
+    }
+
     @SuppressWarnings("unchecked")
-    public <T> Dao<T> dao(T... ignore) {
+    public <D extends Dao<T>, T> D dao(T... ignore) {
         Class<T> clazz = (Class<T>) ignore.getClass().getComponentType();
-        return (Dao<T>) daos.computeIfAbsent(clazz, c -> {
+        return (D) daos.computeIfAbsent(clazz, c -> {
             try {
+                if (customSupplies.containsKey(c)) {
+                    DaoSupply supply = customSupplies.get(c);
+                    return supply.createDao(connection, clazz);
+                }
+
                 return new Dao<T>(connection, clazz);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         });
+    }
+
+    public void close() throws SQLException {
+        connection.close();
+    }
+
+    public interface DaoSupply<T> {
+        Dao<T> createDao(Connection connection, Class<T> cls) throws SQLException;
     }
 }

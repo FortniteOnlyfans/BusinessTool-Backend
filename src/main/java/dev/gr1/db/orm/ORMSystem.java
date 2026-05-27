@@ -55,45 +55,62 @@ public class ORMSystem {
     }
 
     public static TableContext createContext(Connection connection, TableDesc desc) throws SQLException {
-        //skip the id field here
-        int amtFields = desc.fieldNames().size() - 1;
 
-        //select
+        List<String> nonPkFields = desc.fieldNames()
+                .stream()
+                .filter(f -> !f.equals(desc.PKIDFieldName()))
+                .toList();
+
+        int amtFields = nonPkFields.size();
+
+        // ---------------- SELECT by ID ----------------
         String selectSql = "SELECT * FROM " + desc.tableName() + " WHERE " + desc.PKIDFieldName() + " = ?";
         PreparedStatement select = connection.prepareStatement(selectSql);
 
-        //insert
-        String fields = String.join(",", desc.fieldNames()
-                .stream()
-                .filter(f -> !f.equals(desc.PKIDFieldName()))
-                .toList());
+        // ---------------- INSERT ----------------
+        PreparedStatement insert;
 
-        String placeholders = "?,".repeat(desc.fieldNames().size());
-        placeholders = placeholders.substring(0, amtFields * 2 - 1);
+        if (amtFields == 0) {
+            // table only has PK → rely on DB default / auto-generated id
+            String insertSql = "INSERT INTO " + desc.tableName() + " DEFAULT VALUES";
+            insert = connection.prepareStatement(insertSql);
+        } else {
+            String fields = String.join(",", nonPkFields);
+            String placeholders = String.join(",", java.util.Collections.nCopies(amtFields, "?"));
 
-        String insertSql = String.format(
-                "INSERT INTO %s (%s) VALUES (%s)",
-                desc.tableName(), fields, placeholders
-        );
-        PreparedStatement insert = connection.prepareStatement(insertSql);
+            String insertSql = String.format(
+                    "INSERT INTO %s (%s) VALUES (%s)",
+                    desc.tableName(),
+                    fields,
+                    placeholders
+            );
 
-        //update
-        String setClause = String.join(", ",
-                desc.fieldNames().stream()
-                        .filter(f -> !f.equals(desc.PKIDFieldName()))
-                        .map(f -> f + " = ?")
-                        .toList()
-        );
+            insert = connection.prepareStatement(insertSql);
+        }
 
-        String updateSql = String.format(
-                "UPDATE %s SET %s WHERE %s = ?",
-                desc.tableName(),
-                setClause,
-                desc.PKIDFieldName()
-        );
-        PreparedStatement update = connection.prepareStatement(updateSql);
+        // ---------------- UPDATE ----------------
+        PreparedStatement update;
 
-        //delete
+        if (amtFields == 0) {
+            update = null; // or throw if you prefer strict behavior
+        } else {
+            String setClause = String.join(", ",
+                    nonPkFields.stream()
+                            .map(f -> f + " = ?")
+                            .toList()
+            );
+
+            String updateSql = String.format(
+                    "UPDATE %s SET %s WHERE %s = ?",
+                    desc.tableName(),
+                    setClause,
+                    desc.PKIDFieldName()
+            );
+
+            update = connection.prepareStatement(updateSql);
+        }
+
+        // ---------------- DELETE ----------------
         String deleteSql = String.format(
                 "DELETE FROM %s WHERE %s = ?",
                 desc.tableName(),
@@ -101,6 +118,7 @@ public class ORMSystem {
         );
         PreparedStatement delete = connection.prepareStatement(deleteSql);
 
+        // ---------------- SELECT ALL ----------------
         String selectAllSql = "SELECT * FROM " + desc.tableName();
         PreparedStatement selectAll = connection.prepareStatement(selectAllSql);
 
@@ -110,7 +128,7 @@ public class ORMSystem {
     public static Object select(TableContext context, int id) throws SQLException {
         try {
             PreparedStatement stmt = context.selectById;
-            stmt.setInt(0, id);
+            stmt.setInt(1, id);
             ResultSet set = stmt.executeQuery();
 
             if (!set.next()) return null;

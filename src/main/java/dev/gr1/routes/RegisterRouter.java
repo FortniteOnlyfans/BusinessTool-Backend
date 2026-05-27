@@ -25,15 +25,15 @@ public class RegisterRouter implements Route {
             Dao<User> usersDAO = db.dao();
             List<User> users = usersDAO.selectAll();
             for (User user : users) {
-                boolean isEq = user.NAME.equals(username);
+                boolean isEq = user.Name.equals(username);
                 if (isEq) return Utils.fail("Username taken");
             }
 
             String hashedPW = Auth.hashPassword(password);
             //save to db
             User newUser = new User();
-            newUser.NAME = username;
-            newUser.PWDHASH = hashedPW;
+            newUser.Name = username;
+            newUser.Pwd = hashedPW;
             usersDAO.insert(newUser);
 
             return Utils.success();
