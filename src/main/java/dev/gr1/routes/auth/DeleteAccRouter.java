@@ -1,10 +1,11 @@
-package dev.gr1.routes;
+package dev.gr1.routes.auth;
 
 import dev.gr1.Main;
 import dev.gr1.auth.Auth;
 import dev.gr1.db.Database;
 import dev.gr1.db.bind.User;
 import dev.gr1.db.dao.Dao;
+import dev.gr1.routes.Utils;
 import spark.Request;
 import spark.Response;
 import spark.Route;

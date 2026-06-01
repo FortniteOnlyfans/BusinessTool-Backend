@@ -1,10 +1,15 @@
 package dev.gr1.routes;
 
+import dev.gr1.Main;
+import dev.gr1.auth.Auth;
 import dev.gr1.db.bind.User;
+import dev.gr1.db.dao.Dao;
 import org.json.JSONObject;
+import spark.Request;
 
+import java.sql.SQLException;
 import java.util.List;
-import java.util.function.Consumer;
+import java.util.Objects;
 
 public class Utils {
     public static String fail(String reason) {
@@ -20,10 +25,10 @@ public class Utils {
                 .toString();
     }
 
-    public static String success(Consumer<JSONObject> objFunc) {
+    public static String success(JSONObject payload) {
         JSONObject object = new JSONObject()
-                .put("status", "success");
-        objFunc.accept(object);
+                .put("status", "success")
+                .put("payload", payload);
         return object.toString();
     }
 
@@ -39,5 +44,27 @@ public class Utils {
         return new JSONObject()
                 .put("status", "expired")
                 .toString();
+    }
+
+    public static int intParam(String param) {
+        try {
+            return Integer.parseInt(param);
+        } catch (Throwable _) {
+            return -1;
+        }
+    }
+
+    ///true = expired
+    public static boolean isExpired(Request request) {
+        String token = request.headers("Authorization");
+        if (token == null) return true;
+        return !Auth.trustworthy(token);
+    }
+
+    public static int userID(Request request) throws SQLException {
+        String token = request.headers("Authorization");
+        String sub = Auth.getSub(token);
+        Dao<User> userDao = Main.DB.dao();
+        return Objects.requireNonNull(findUser(userDao.selectAll(), sub)).ID;
     }
 }

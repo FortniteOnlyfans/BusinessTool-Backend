@@ -5,18 +5,20 @@ import dev.gr1.args.Args;
 import dev.gr1.db.Database;
 import dev.gr1.db.bind.Geld;
 import dev.gr1.db.bind.Projekt;
-import dev.gr1.db.bind.User;
-import dev.gr1.db.dao.Dao;
+import dev.gr1.db.bind.ProjektVersion;
 import dev.gr1.db.dao.GeldDao;
 import dev.gr1.db.dao.ProjektDao;
-import dev.gr1.routes.DeleteAccRouter;
-import dev.gr1.routes.LoginRouter;
-import dev.gr1.routes.RegisterRouter;
+import dev.gr1.db.dao.ProjektVersionDao;
+import dev.gr1.routes.auth.DeleteAccRouter;
+import dev.gr1.routes.auth.LoginRouter;
+import dev.gr1.routes.auth.RegisterRouter;
+import dev.gr1.routes.calc.CalcAllRouter;
+import dev.gr1.routes.calc.CalcLatestRouter;
+import dev.gr1.routes.calc.CalcVersionRouter;
+import dev.gr1.routes.proj.*;
 import spark.Spark;
 
 import java.sql.SQLException;
-import java.util.Date;
-import java.util.List;
 
 public class Main {
     public static Database DB;
@@ -25,12 +27,10 @@ public class Main {
         DB = new Database("DB.sqlite");
         DB.registerCustomDao(Projekt.class, ProjektDao::new);
         DB.registerCustomDao(Geld.class, GeldDao::new);
+        DB.registerCustomDao(ProjektVersion.class, ProjektVersionDao::new);
 
 
 
-        DB.close();
-
-        System.exit(0);
 
         ArgParser argParser = new ArgParser();
         argParser.addArg(ArgParser.ArgFlavor.Value, "port", 4100);
@@ -75,9 +75,20 @@ public class Main {
         Spark.post("/register", new RegisterRouter());
         Spark.post("/login", new LoginRouter());
         Spark.get("/deleteAcc", new DeleteAccRouter());
+        Spark.get("/project/:id/info", new ProjInfoRouter());
+        Spark.post("/project/create", new ProjCreateRouter());
+        Spark.post("/project/:id/delete", new ProjDeleteRouter());
+        Spark.get("/project/version/:vid/info", new ProjVerInfoRouter());
+        Spark.post("/project/:pid/version/create", new ProjVerCreateRouter());
+        Spark.get("/project/:id/calc/latest", new CalcLatestRouter());
+        Spark.get("/project/calc/version/:id", new CalcVersionRouter());
+        Spark.get("/project/:id/calc/all", new CalcAllRouter());
 
         Spark.init();
 
         System.out.printf("Server started on port %d.\n", port);
+
+        //Spark.awaitStop();
+        //DB.close();
     }
 }

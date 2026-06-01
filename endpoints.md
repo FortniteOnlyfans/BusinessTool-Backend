@@ -6,7 +6,7 @@ Alle Responses (außer `/login`) folgen dem Standardformat:
 {
   "status": "success" | "fail" | "expired",
   "reason": "string",
-  "payload": {}
+  *"payload": {}
 }
 ```
 
@@ -29,6 +29,22 @@ Alle Responses (außer `/login`) folgen dem Standardformat:
   *"laufzeit": number (months)
 }
 ```
+
+## CalcResult
+
+**CalcResult** = Objektstruktur:
+
+```
+{
+  "kapitalbedarf": number,
+  "umsatz": number,
+  "kosten": number,
+  "deckungsbeitrag": number,
+  "gewinn": number
+}
+```
+
+
 
 > `*` = optionales Feld
 
@@ -104,7 +120,8 @@ Authorization: token
   "type": string,
   *"latest": number,
   "versions": [number],
-  "created": number (milliseconds)
+  "created": number (milliseconds),
+  "startKosten": [Geld]
 }
 ```
 
@@ -154,7 +171,7 @@ Standard Response Format
 
 # 📊 Projekt Versionen
 
-## GET `/project/<n>/version/<n>/info`
+## GET `/project/version/<n>/info`
 
 ### Header
 
@@ -173,7 +190,8 @@ Authorization: token
   "ertrag": [Geld],
   "zeitspanne": number (months),
   "erstellt": number (milliseconds),
-  "userName": string
+  "userName": string,
+  "extra": {SpecificExtra}
 }
 ```
 
@@ -196,15 +214,78 @@ Authorization: token
   *"kapital": [Geld],
   *"privat": [Geld],
   *"ertrag": [Geld],
-  "zeitspanne": number (months)
+  "zeitspanne": number (months),
+  "extra": { SpecificExtra }
 }
 ```
+
+SpecificExtra:
+Für Freemium:
+```
+{
+    "basisNutzer": number,
+    "premiumNutzer": number,
+    "preisPremium": number,
+    "aboZeit": number,
+    "wachstumsrate": number,
+    "varKosten": [Geld] (Geld pro Nutzer)
+}
+```
+
 
 ### Response
 
 ```
 {
   "projVerId": number
+}
+```
+
+# 🖩 Kalkulationen
+
+## GET `/project/<n>/calc/latest`
+
+### Header
+
+```
+Authorization: token
+```
+
+### Response
+```
+{CalcResult}
+```
+
+## GET `/project/calc/version/<n>`
+
+### Header
+
+```
+Authorization: token
+```
+
+### Response
+```
+{CalcResult}
+```
+
+## GET `/project/<n>/calc/all`
+
+### Header
+
+```
+Authorization: token
+```
+
+### Response
+```
+{
+    "results": [
+        {
+            "date": number (milliseconds),
+            "result": {CalcResult}
+        }
+    ]
 }
 ```
 

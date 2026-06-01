@@ -6,5 +6,5 @@ public enum GeldType {
     Ertrag,
     Privat,
     Kosten,
-    StartKosten
+    Freemium_VarKosten, StartKosten
 }
