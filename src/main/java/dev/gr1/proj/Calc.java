@@ -30,6 +30,8 @@ public class Calc {
             //TODO: hier ertrag einfügen
             //kapital auch zu projekt packen von version weg
             //rentabilität: im 1. version die startkosten abziehen
+            //hier auch aboZeit mit einbeziehen!!!
+            //bei projektversion zeitspanne wegnehmen und immer ein jahr lang machen
             umsatz = freemiumVersion.PreisPremium * freemiumVersion.PremiumNutzer
                             * freemiumVersion.Wachstumsrate;
 
