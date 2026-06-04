@@ -12,9 +12,11 @@ public class Projekt {
     public int ID;
     public int userID;
     public int startKostenID;
+    public int kapitalID;
     public String type;
     public long creationDate;
     public Integer latestID;
+    public Integer firstID;
     public String Name;
 
     public boolean isFreemium() {

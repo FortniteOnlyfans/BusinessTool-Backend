@@ -40,7 +40,9 @@ Alle Responses (außer `/login`) folgen dem Standardformat:
   "umsatz": number,
   "kosten": number,
   "deckungsbeitrag": number,
-  "gewinn": number
+  "gewinn": number,
+  "rentabilitat": number,
+  "liquiditat": number
 }
 ```
 
@@ -214,7 +216,6 @@ Authorization: token
   *"kapital": [Geld],
   *"privat": [Geld],
   *"ertrag": [Geld],
-  "zeitspanne": number (months),
   "extra": { SpecificExtra }
 }
 ```

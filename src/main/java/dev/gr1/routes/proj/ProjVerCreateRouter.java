@@ -26,10 +26,9 @@ public class ProjVerCreateRouter implements Route {
             }
 
             JSONObject body = new JSONObject(request.body());
-            int zeitspanne = body.getInt("zeitspanne");
 
             ProjektDao dao = Main.DB.dao();
-            ProjektVersion version = dao.createNewVersion(pid, user, zeitspanne, body.getJSONObject("extra"));
+            ProjektVersion version = dao.createNewVersion(pid, user, body.getJSONObject("extra"));
 
             if (body.has("kosten")) {
                 JSONArray kosten = body.getJSONArray("kosten");

@@ -6,7 +6,7 @@
 
 +Gewinn = Deckungsbeitrag - Fixkosten
 
-Liquidität: Endbestand = Anfangsbestand + Einzahlungen - Auszahlungen
+Liquidität: Endbestand = Anfangsbestand + gewinn
 
 +Kapitalbedarf = Entwicklungskosten + Design & Konzeption + Infrastruktur + Markteinführung + Marketing +
                 Anlaufverluste + Sicherheitsreserve Entwicklungskosten + Design & Konzeption + Infrastruktur + Markteinführung + Marketing +

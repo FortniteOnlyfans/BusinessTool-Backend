@@ -9,6 +9,7 @@ import org.json.JSONObject;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Comparator;
 import java.util.List;
 
 public class ProjektDao extends Dao<Projekt> {
@@ -22,10 +23,9 @@ public class ProjektDao extends Dao<Projekt> {
         return pvDao.select(proj.latestID);
     }
 
-    public ProjektVersion createNewVersion(int projId, int userId, int zeitspanne, JSONObject extra) throws SQLException {
+    public ProjektVersion createNewVersion(int projId, int userId, JSONObject extra) throws SQLException {
         ProjektVersion newVersion = new ProjektVersion();
         newVersion.userID = userId;
-        newVersion.zeitspanne = zeitspanne;
 
         newVersion.erstellt = System.currentTimeMillis();
         newVersion.ProjektID = projId;
@@ -34,11 +34,6 @@ public class ProjektDao extends Dao<Projekt> {
         Dao<Finanzierung> finanzierungDao = Main.DB.dao();
         finanzierungDao.insert(finanzierung);
         newVersion.finanzierungID = finanzierung.ID;
-
-        Kapital kapital = new Kapital();
-        Dao<Kapital> kapitalDao = Main.DB.dao();
-        kapitalDao.insert(kapital);
-        newVersion.kapitalID = kapital.ID;
 
         Kosten kosten = new Kosten();
         Dao<Kosten> kostenDao = Main.DB.dao();
@@ -58,8 +53,11 @@ public class ProjektDao extends Dao<Projekt> {
         Projekt proj = select(projId);
         Dao<ProjektVersion> pvDao = Main.DB.dao();
         pvDao.insert(newVersion);
-        proj.latestID = newVersion.ID;
+        if (proj.firstID == null) {
+            proj.firstID = newVersion.ID;
+        }
         update(proj);
+        proj.latestID = newVersion.ID;
 
         if (proj.type.equals(ProjectType.Freemium.name())) {
             Dao<FreemiumProjektVersion> freemiumDao = Main.DB.dao();
@@ -90,6 +88,11 @@ public class ProjektDao extends Dao<Projekt> {
         startKostenDao.insert(startKosten);
         newProjekt.startKostenID = startKosten.ID;
 
+        Kapital kapital = new Kapital();
+        Dao<Kapital> kapitalDao = Main.DB.dao();
+        kapitalDao.insert(kapital);
+        newProjekt.kapitalID = kapital.ID;
+
         return newProjekt;
     }
 
@@ -98,6 +101,7 @@ public class ProjektDao extends Dao<Projekt> {
         return versionDao.selectAll()
                 .stream()
                 .filter(v -> v.ProjektID == projId)
+                .sorted(Comparator.comparingLong(v -> v.erstellt))
                 .toList();
     }
 
@@ -106,6 +110,7 @@ public class ProjektDao extends Dao<Projekt> {
         return versionDao.selectAll()
                 .stream()
                 .filter(v -> v.ProjektID == projId)
+                .sorted(Comparator.comparingLong(v -> v.erstellt))
                 .map(v -> v.ID)
                 .toList();
     }
@@ -122,7 +127,15 @@ public class ProjektDao extends Dao<Projekt> {
         }
         Dao<StartKosten> startKostenDao = Main.DB.dao();
         startKostenDao.delete(projekt.startKostenID);
+
+        List<Geld> kapitalGeld = GeldUtils.allGeld(projekt.kapitalID, GeldType.Kapital);
+        GeldUtils.deleteAll(kapitalGeld);
+        Dao<Kapital> kapitalDao = Main.DB.dao();
+        kapitalDao.delete(projekt.kapitalID);
+
         ProjektDao projektDao = Main.DB.dao();
         projektDao.delete(projekt);
+
+
     }
 }

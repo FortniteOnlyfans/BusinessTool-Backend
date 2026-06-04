@@ -28,11 +28,6 @@ public class ProjektVersionDao extends Dao<ProjektVersion> {
         Dao<Ertrag> ertragDao = Main.DB.dao();
         ertragDao.delete(version.ertragID);
 
-        List<Geld> kapitalGeld = GeldUtils.allGeld(version.kapitalID, GeldType.Kapital);
-        GeldUtils.deleteAll(kapitalGeld);
-        Dao<Kapital> kapitalDao = Main.DB.dao();
-        kapitalDao.delete(version.kapitalID);
-
         List<Geld> finanzierungGeld = GeldUtils.allGeld(version.finanzierungID, GeldType.Finanzierung);
         GeldUtils.deleteAll(finanzierungGeld);
         Dao<Finanzierung> finanzierungDao = Main.DB.dao();

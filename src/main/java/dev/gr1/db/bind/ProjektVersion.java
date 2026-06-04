@@ -11,9 +11,7 @@ public class ProjektVersion {
     public int ProjektID;
     public long erstellt;
     public int userID;
-    public int zeitspanne;
     public int finanzierungID;
-    public int kapitalID;
     public int kostenID;
     public int privatID;
     public int ertragID;

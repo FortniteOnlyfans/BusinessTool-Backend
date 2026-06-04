@@ -38,7 +38,6 @@ public class ProjVerInfoRouter implements Route {
             User user = userDao.select(version.userID);
 
             JSONObject payload = new JSONObject();
-            payload.put("zeitspanne", version.zeitspanne);
             payload.put("erstellt", version.erstellt);
             payload.put("userName", user.Name);
 
