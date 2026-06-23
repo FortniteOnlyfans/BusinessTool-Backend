@@ -28,6 +28,9 @@ public class DeleteAccRouter implements Route {
             usersDAO.delete(found);
         }
 
+        Dao<User> userDao = Main.DB.dao();
+        List<User> allUsers = userDao.selectAll();
+
         return Utils.success();
     }
 }
