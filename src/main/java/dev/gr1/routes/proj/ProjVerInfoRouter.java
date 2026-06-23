@@ -43,7 +43,6 @@ public class ProjVerInfoRouter implements Route {
 
             payload.put("kosten", GeldUtils.toJson(GeldUtils.allGeld(version.kostenID, GeldType.Kosten)));
             payload.put("finanzierung", GeldUtils.toJson(GeldUtils.allGeld(version.finanzierungID, GeldType.Finanzierung)));
-            payload.put("kapital", GeldUtils.toJson(GeldUtils.allGeld(version.kapitalID, GeldType.Kapital)));
             payload.put("privat", GeldUtils.toJson(GeldUtils.allGeld(version.privatID, GeldType.Privat)));
             payload.put("ertrag", GeldUtils.toJson(GeldUtils.allGeld(version.ertragID, GeldType.Ertrag)));
 

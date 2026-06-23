@@ -40,6 +40,7 @@ public class LoginRouter implements Route {
 
             return Utils.success();
         } catch (Exception e) {
+            e.printStackTrace();
             return Utils.fail("Invalid request");
         }
     }

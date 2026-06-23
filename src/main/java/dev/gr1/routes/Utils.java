@@ -57,6 +57,7 @@ public class Utils {
     ///true = expired
     public static boolean isExpired(Request request) {
         String token = request.headers("Authorization");
+        System.out.println(token);
         if (token == null) return true;
         return !Auth.trustworthy(token);
     }

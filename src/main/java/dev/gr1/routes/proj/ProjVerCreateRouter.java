@@ -42,12 +42,6 @@ public class ProjVerCreateRouter implements Route {
                 GeldUtils.insertAll(geld);
             }
 
-            if (body.has("kapital")) {
-                JSONArray kapital = body.getJSONArray("kapital");
-                Geld[] geld = GeldUtils.fromJson(kapital, GeldType.Kapital, version.kapitalID);
-                GeldUtils.insertAll(geld);
-            }
-
             if (body.has("privat")) {
                 JSONArray privat = body.getJSONArray("privat");
                 Geld[] geld = GeldUtils.fromJson(privat, GeldType.Privat, version.privatID);

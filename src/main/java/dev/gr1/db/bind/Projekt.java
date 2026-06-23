@@ -11,8 +11,8 @@ public class Projekt {
     @Id
     public int ID;
     public int userID;
-    public int startKostenID;
-    public int kapitalID;
+    public Integer startKostenID;
+    public Integer kapitalID;
     public String type;
     public long creationDate;
     public Integer latestID;

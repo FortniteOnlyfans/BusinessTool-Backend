@@ -69,6 +69,7 @@ public class Main {
                     "GET,POST,PUT,DELETE,OPTIONS");
             response.header("Access-Control-Allow-Headers",
                     "Content-Type,Authorization");
+            response.header("Access-Control-Expose-Headers", "Authorization");
             response.type("application/json");
         });
 

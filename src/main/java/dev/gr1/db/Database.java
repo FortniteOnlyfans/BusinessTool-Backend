@@ -34,7 +34,7 @@ public class Database {
     }
 
     @SuppressWarnings("unchecked")
-    public <D extends Dao<T>, T> D dao(T... ignore) {
+    public synchronized  <D extends Dao<T>, T> D dao(T... ignore) {
         Class<T> clazz = (Class<T>) ignore.getClass().getComponentType();
         return (D) daos.computeIfAbsent(clazz, c -> {
             try {

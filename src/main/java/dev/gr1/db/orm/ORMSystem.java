@@ -125,7 +125,7 @@ public class ORMSystem {
         return new TableContext(desc, select, insert, update, delete, selectAll);
     }
 
-    public static Object select(TableContext context, int id) throws SQLException {
+    public static synchronized Object select(TableContext context, int id) throws SQLException {
         try {
             PreparedStatement stmt = context.selectById;
             stmt.setInt(1, id);
@@ -146,7 +146,7 @@ public class ORMSystem {
         }
     }
 
-    public static void insert(TableContext context, Object o) throws SQLException {
+    public static synchronized void insert(TableContext context, Object o) throws SQLException {
         PreparedStatement stmt = context.insert;
         String pkName = context.desc.PKIDFieldName();
 
@@ -168,7 +168,7 @@ public class ORMSystem {
         }
     }
 
-    public static void update(TableContext context, Object o) throws SQLException {
+    public static synchronized void update(TableContext context, Object o) throws SQLException {
         PreparedStatement stmt = context.update;
         List<String> fields = context.desc.fieldNames();
         String pkName = context.desc.PKIDFieldName();
@@ -183,7 +183,7 @@ public class ORMSystem {
         stmt.executeUpdate();
     }
 
-    public static void delete(TableContext context, Object id) throws SQLException {
+    public static synchronized void delete(TableContext context, Object id) throws SQLException {
         PreparedStatement stmt = context.delete;
         Object idValue;
 
@@ -201,7 +201,7 @@ public class ORMSystem {
         stmt.executeUpdate();
     }
 
-    public static List<Object> queryAll(TableContext context) throws SQLException {
+    public static synchronized List<Object> queryAll(TableContext context) throws SQLException {
         List<Object> results = new ArrayList<>();
 
         try (ResultSet rs = context.selectAll.executeQuery()) {
