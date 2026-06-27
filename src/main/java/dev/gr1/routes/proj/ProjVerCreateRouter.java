@@ -1,9 +1,13 @@
 package dev.gr1.routes.proj;
 
 import dev.gr1.Main;
+import dev.gr1.db.bind.FreemiumProjektVersion;
 import dev.gr1.db.bind.Geld;
+import dev.gr1.db.bind.Projekt;
 import dev.gr1.db.bind.ProjektVersion;
+import dev.gr1.db.dao.Dao;
 import dev.gr1.db.dao.ProjektDao;
+import dev.gr1.db.dao.ProjektVersionDao;
 import dev.gr1.proj.GeldType;
 import dev.gr1.proj.GeldUtils;
 import dev.gr1.routes.Utils;
@@ -22,37 +26,19 @@ public class ProjVerCreateRouter implements Route {
 
             int pid = Utils.intParam(request.params(":pid"));
             if (pid < 0) {
-                return Utils.fail("Invalid project id");
+                return Utils.fail("Invalid version id");
             }
 
-            JSONObject body = new JSONObject(request.body());
+            ProjektDao projektDao = Main.DB.dao();
+            Projekt project = projektDao.select(pid);
+            if (project.isFreemium()) {
+                FreemiumProjektVersion newFreemium = new FreemiumProjektVersion();
+                Dao<FreemiumProjektVersion> freemiumDao = Main.DB.dao();
+                freemiumDao.insert(newFreemium);
+            }
 
             ProjektDao dao = Main.DB.dao();
-            ProjektVersion version = dao.createNewVersion(pid, user, body.getJSONObject("extra"));
-
-            if (body.has("kosten")) {
-                JSONArray kosten = body.getJSONArray("kosten");
-                Geld[] geld = GeldUtils.fromJson(kosten, GeldType.Kosten, version.kostenID);
-                GeldUtils.insertAll(geld);
-            }
-
-            if (body.has("finanzierung")) {
-                JSONArray finanzierung = body.getJSONArray("finanzierung");
-                Geld[] geld = GeldUtils.fromJson(finanzierung, GeldType.Finanzierung, version.finanzierungID);
-                GeldUtils.insertAll(geld);
-            }
-
-            if (body.has("privat")) {
-                JSONArray privat = body.getJSONArray("privat");
-                Geld[] geld = GeldUtils.fromJson(privat, GeldType.Privat, version.privatID);
-                GeldUtils.insertAll(geld);
-            }
-
-            if (body.has("ertrag")) {
-                JSONArray ertrag = body.getJSONArray("ertrag");
-                Geld[] geld = GeldUtils.fromJson(ertrag, GeldType.Ertrag, version.ertragID);
-                GeldUtils.insertAll(geld);
-            }
+            ProjektVersion version = dao.createNewVersion(pid, user);
 
             JSONObject payload = new JSONObject();
             payload.put("projVerId", version.ID);

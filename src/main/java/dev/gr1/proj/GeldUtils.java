@@ -8,6 +8,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class GeldUtils {
@@ -78,5 +79,17 @@ public class GeldUtils {
             array.put(object);
         }
         return array;
+    }
+
+    public static void deleteAllGeldFor(int targetId, GeldType geldType) throws SQLException {
+        GeldDao dao = Main.DB.dao();
+        List<Geld> all = dao.selectAll();
+        List<Geld> toDelete = new ArrayList<>();
+        for (Geld geld : all) {
+            if (geld.isTarget(geldType) && geld.targetID == targetId) {
+                toDelete.add(geld);
+            }
+        }
+        deleteAll(toDelete);
     }
 }

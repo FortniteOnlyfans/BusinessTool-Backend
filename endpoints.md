@@ -199,7 +199,7 @@ Authorization: token
 
 ---
 
-## POST `/project/<n>/version/create`
+## POST `/project/version/<n>/save`
 
 ### Header
 
@@ -290,7 +290,24 @@ Authorization: token
 }
 ```
 
----
+
+## GET `/project/list`
+### Header
+```
+Authorization: token
+```
+
+### Response
+```
+{
+    "projects": [
+        {
+            "name": string,
+            "id": number
+        }
+    ]
+}
+```
 
 # 🧠 Legende
 

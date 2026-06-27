@@ -80,10 +80,12 @@ public class Main {
         Spark.post("/project/create", new ProjCreateRouter());
         Spark.post("/project/:id/delete", new ProjDeleteRouter());
         Spark.get("/project/version/:vid/info", new ProjVerInfoRouter());
+        Spark.post("/project/version/:vid/save", new ProjVerSaveRouter());
         Spark.post("/project/:pid/version/create", new ProjVerCreateRouter());
         Spark.get("/project/:id/calc/latest", new CalcLatestRouter());
         Spark.get("/project/calc/version/:id", new CalcVersionRouter());
         Spark.get("/project/:id/calc/all", new CalcAllRouter());
+        Spark.get("/project/list", new ProjListRouter());
 
         Spark.init();
 

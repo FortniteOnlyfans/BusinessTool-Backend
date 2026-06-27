@@ -46,12 +46,14 @@ public class ProjektVersionDao extends Dao<ProjektVersion> {
                     .stream()
                     .filter(f -> f.ProjektVersionID == versionId)
                     .findFirst()
-                    .get();
+                    .orElseGet(() -> null);
 
-            List<Geld> gelder = GeldUtils.allGeld(freemiumId.ID, GeldType.Freemium_VarKosten);
-            GeldUtils.deleteAll(gelder);
+            if (freemiumId != null) {
+                List<Geld> gelder = GeldUtils.allGeld(freemiumId.ID, GeldType.Freemium_VarKosten);
+                GeldUtils.deleteAll(gelder);
+                freemiumDao.delete(freemiumId);
+            }
 
-            freemiumDao.delete(freemiumId);
         }
 
         delete(version);
@@ -63,6 +65,6 @@ public class ProjektVersionDao extends Dao<ProjektVersion> {
                 .stream()
                 .filter(f -> f.ProjektVersionID == versionId)
                 .findFirst()
-                .get();
+                .orElse(null);
     }
 }

@@ -23,7 +23,7 @@ public class ProjektDao extends Dao<Projekt> {
         return pvDao.select(proj.latestID);
     }
 
-    public ProjektVersion createNewVersion(int projId, int userId, JSONObject extra) throws SQLException {
+    public ProjektVersion createNewVersion(int projId, int userId) throws SQLException {
         ProjektVersion newVersion = new ProjektVersion();
         newVersion.userID = userId;
 
@@ -58,21 +58,6 @@ public class ProjektDao extends Dao<Projekt> {
         }
         update(proj);
         proj.latestID = newVersion.ID;
-
-        if (proj.type.equals(ProjectType.Freemium.name())) {
-            Dao<FreemiumProjektVersion> freemiumDao = Main.DB.dao();
-            FreemiumProjektVersion newFreemium = new FreemiumProjektVersion();
-            newFreemium.BasisNutzer = extra.getInt("basisNutzer");
-            newFreemium.PremiumNutzer = extra.getInt("premiumNutzer");
-            newFreemium.PreisPremium = extra.getDouble("preisPremium");
-            newFreemium.Wachstumsrate = extra.getDouble("wachstumsrate");
-            newFreemium.AboZeit = extra.getInt("aboZeit");
-            newFreemium.ProjektVersionID = newVersion.ID;
-            freemiumDao.insert(newFreemium);
-
-            Geld[] gelder = GeldUtils.fromJson(extra.getJSONArray("varKosten"), GeldType.Freemium_VarKosten, newFreemium.ID);
-            GeldUtils.insertAll(gelder);
-        }
 
         return newVersion;
     }
@@ -128,10 +113,12 @@ public class ProjektDao extends Dao<Projekt> {
         Dao<StartKosten> startKostenDao = Main.DB.dao();
         startKostenDao.delete(projekt.startKostenID);
 
-        List<Geld> kapitalGeld = GeldUtils.allGeld(projekt.kapitalID, GeldType.Kapital);
-        GeldUtils.deleteAll(kapitalGeld);
-        Dao<Kapital> kapitalDao = Main.DB.dao();
-        kapitalDao.delete(projekt.kapitalID);
+        if (projekt.kapitalID != null) {
+            List<Geld> kapitalGeld = GeldUtils.allGeld(projekt.kapitalID, GeldType.Kapital);
+            GeldUtils.deleteAll(kapitalGeld);
+            Dao<Kapital> kapitalDao = Main.DB.dao();
+            kapitalDao.delete(projekt.kapitalID);
+        }
 
         ProjektDao projektDao = Main.DB.dao();
         projektDao.delete(projekt);

@@ -48,12 +48,14 @@ public class ProjVerInfoRouter implements Route {
 
             if (projekt.isFreemium()) {
                 FreemiumProjektVersion freemium = dao.selectFreemium(vid);
-                JSONObject freemiumObj = new JSONObject();
-                freemiumObj.put("aboZeit", freemium.AboZeit);
-                freemiumObj.put("basisNutzer", freemium.BasisNutzer);
-                freemiumObj.put("premiumNutzer", freemium.PremiumNutzer);
-                freemiumObj.put("preisPremium", freemium.PreisPremium);
-                payload.put("extra", freemiumObj);
+                if (freemium != null) {
+                    JSONObject freemiumObj = new JSONObject();
+                    freemiumObj.put("aboZeit", freemium.AboZeit);
+                    freemiumObj.put("basisNutzer", freemium.BasisNutzer);
+                    freemiumObj.put("premiumNutzer", freemium.PremiumNutzer);
+                    freemiumObj.put("preisPremium", freemium.PreisPremium);
+                    payload.put("extra", freemiumObj);
+                }
             }
 
             return Utils.success(payload);
