@@ -29,16 +29,21 @@ public class ProjVerCreateRouter implements Route {
                 return Utils.fail("Invalid version id");
             }
 
+
             ProjektDao projektDao = Main.DB.dao();
             Projekt project = projektDao.select(pid);
-            if (project.isFreemium()) {
-                FreemiumProjektVersion newFreemium = new FreemiumProjektVersion();
-                Dao<FreemiumProjektVersion> freemiumDao = Main.DB.dao();
-                freemiumDao.insert(newFreemium);
-            }
 
             ProjektDao dao = Main.DB.dao();
             ProjektVersion version = dao.createNewVersion(pid, user);
+
+            if (project.isFreemium()) {
+                FreemiumProjektVersion newFreemium = new FreemiumProjektVersion();
+                Dao<FreemiumProjektVersion> freemiumDao = Main.DB.dao();
+                newFreemium.ProjektVersionID = version.ID;
+                newFreemium.AboZeit = 1;
+                newFreemium.Wachstumsrate = 1;
+                freemiumDao.insert(newFreemium);
+            }
 
             JSONObject payload = new JSONObject();
             payload.put("projVerId", version.ID);

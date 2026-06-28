@@ -3,9 +3,11 @@ package dev.gr1;
 import dev.gr1.args.ArgParser;
 import dev.gr1.args.Args;
 import dev.gr1.db.Database;
+import dev.gr1.db.bind.FreemiumProjektVersion;
 import dev.gr1.db.bind.Geld;
 import dev.gr1.db.bind.Projekt;
 import dev.gr1.db.bind.ProjektVersion;
+import dev.gr1.db.dao.FreemiumVersionDao;
 import dev.gr1.db.dao.GeldDao;
 import dev.gr1.db.dao.ProjektDao;
 import dev.gr1.db.dao.ProjektVersionDao;
@@ -28,6 +30,7 @@ public class Main {
         DB.registerCustomDao(Projekt.class, ProjektDao::new);
         DB.registerCustomDao(Geld.class, GeldDao::new);
         DB.registerCustomDao(ProjektVersion.class, ProjektVersionDao::new);
+        DB.registerCustomDao(FreemiumProjektVersion.class, FreemiumVersionDao::new);
 
 
 

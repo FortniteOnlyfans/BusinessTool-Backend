@@ -77,6 +77,7 @@ public class ProjVerSaveRouter implements Route {
                 newFreemium.Wachstumsrate = extra.getDouble("wachstumsrate");
                 newFreemium.AboZeit = extra.getInt("aboZeit");
                 newFreemium.ProjektVersionID = version.ID;
+                freemiumDao.update(newFreemium);
 
                 Geld[] gelder = GeldUtils.fromJson(extra.getJSONArray("varKosten"), GeldType.Freemium_VarKosten, newFreemium.ID);
                 GeldUtils.deleteAllGeldFor(newFreemium.ID, GeldType.Freemium_VarKosten);

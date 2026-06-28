@@ -11,6 +11,7 @@ import dev.gr1.db.dao.ProjektVersionDao;
 import dev.gr1.proj.GeldType;
 import dev.gr1.proj.GeldUtils;
 import dev.gr1.routes.Utils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import spark.Request;
 import spark.Response;
@@ -54,6 +55,9 @@ public class ProjVerInfoRouter implements Route {
                     freemiumObj.put("basisNutzer", freemium.BasisNutzer);
                     freemiumObj.put("premiumNutzer", freemium.PremiumNutzer);
                     freemiumObj.put("preisPremium", freemium.PreisPremium);
+                    freemiumObj.put("wachstumsrate", freemium.Wachstumsrate);
+                    JSONArray a = GeldUtils.toJson(GeldUtils.allGeld(freemium.ID, GeldType.Freemium_VarKosten));
+                    freemiumObj.put("varKosten", a);
                     payload.put("extra", freemiumObj);
                 }
             }
